@@ -1,13 +1,11 @@
-from typing import List
+from typing import List, Dict
 
 import torch
+import matplotlib.pyplot as plt
 import torchvision
 from torch import nn
-import matplotlib.pyplot as plt
 
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def train_step(model: torch.nn.Module,
                dataloader: torch.utils.data.DataLoader,
@@ -68,8 +66,6 @@ def test_step(model: torch.nn.Module,
   return test_loss, test_acc
 
 
-
-
 from tqdm.auto import tqdm
 
 def train(model: torch.nn.Module,
@@ -109,6 +105,33 @@ def train(model: torch.nn.Module,
   return results
 
 
+def plot_loss_curves(results: Dict[str, List[float]]):
+  loss = results['train_loss']
+  test_loss = results['test_loss']
+
+  accuracy = results['train_acc']
+  test_accuracy = results['test_acc']
+
+  epochs = range(len(results['train_loss']))
+
+  plt.figure(figsize=(15, 7))
+
+  plt.subplot(1, 2, 1)
+  plt.plot(epochs, loss, label='train_loss')
+  plt.plot(epochs, test_loss, label='test_loss')
+  plt.title('Loss')
+  plt.xlabel('Epochs')
+  plt.legend()
+
+  plt.subplot(1, 2, 2)
+  plt.plot(epochs, accuracy, label='train_acc')
+  plt.plot(epochs, test_accuracy, label='test_acc')
+  plt.title('Accuracy')
+  plt.xlabel('Epochs')
+  plt.legend()
+  plt.show()
+
+
 def pred_and_plot_image(model: torch.nn.Module,
                     image_path: str,
                     class_names: List[str] = None,
@@ -117,7 +140,7 @@ def pred_and_plot_image(model: torch.nn.Module,
 
   target_image = torchvision.io.read_image(str(image_path)).type(torch.float32)
 
-
+  target_image /= 225.
 
   if transform:
     target_image = transform(target_image)
@@ -143,3 +166,4 @@ def pred_and_plot_image(model: torch.nn.Module,
 
   plt.title(title)
   plt.axis(False)
+  plt.show()
