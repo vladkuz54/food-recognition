@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from helper_functions import device, train, plot_loss_curves, pred_and_plot_image
 from model import TinyVGG
 
-if __name__ == '__main__':  # Add the main guard to resolve multiprocessing issues
+if __name__ == '__main__':  
     data_path = Path("data/")
     image_path = data_path / 'pizza_steak_sushi'
 
